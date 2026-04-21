@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "player.h"
+#include "tileregistry.h"
+#include "room.h"
 
 int main()
 {
@@ -16,6 +18,15 @@ int main()
     sf::View view(window.getDefaultView());
     // gets scaled up
     view.setSize({320, 180});
+
+    TileRegistry tileReg;
+
+    sf::Texture diamondPlateTexture("textures/diamondplate.png");
+    TileData diamondPlateData = TileData(diamondPlateTexture);
+    tileReg.add(TileType::DiamondPlate, diamondPlateData);
+
+    Room room = Room(20, 20);
+    room.generate();
 
     sf::Texture playerTexture("textures/player.png");
     sf::Sprite prop(playerTexture);
@@ -37,9 +48,10 @@ int main()
             player.update(deltaTime);
             view.setCenter(player.getPosition());   // TODO: add half texture offset to center the player correctly
             window.setView(view);
-            player.draw(window);
-            
+
+            room.draw(window, tileReg);
             window.draw(prop);
+            player.draw(window);
 
         window.display();
     }
